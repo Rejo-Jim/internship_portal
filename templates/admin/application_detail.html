@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ application.company_name }} - {{ application.student.user.full_name }}{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('admin.applications') }}">Applications</a></li>
+    <li class="breadcrumb-item active">{{ application.company_name }}</li>
+  </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+  <div>
+    <h4 class="mb-1">{{ application.role }} — {{ application.company_name }}</h4>
+    <div class="text-muted">Student: {{ application.student.user.full_name }} ({{ application.student.user.email }})</div>
+  </div>
+  <span class="badge bg-{{ status_badge(application.status) }} fs-6">{{ application.status }}</span>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card mb-3">
+      <div class="card-header">Details</div>
+      <div class="card-body row g-3">
+        <div class="col-md-6"><strong>Type:</strong><br>{{ application.internship_type or '—' }}</div>
+        <div class="col-md-6"><strong>Location:</strong><br>{{ application.location or '—' }}</div>
+        <div class="col-md-6"><strong>Work Mode:</strong><br>{{ application.work_mode or '—' }}</div>
+        <div class="col-md-6"><strong>Applied On:</strong><br>{{ application.application_date or '—' }}</div>
+        <div class="col-md-6"><strong>Deadline:</strong><br>{{ application.application_deadline or '—' }}</div>
+        <div class="col-md-6"><strong>Source:</strong><br>{{ application.source or '—' }}</div>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">Update Status (Admin Override)</div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('admin.update_application_status', app_id=application.id) }}" class="d-flex gap-2 align-items-end flex-wrap">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <select name="status" class="form-select" style="max-width:280px;">
+            {% for s in statuses %}
+            <option value="{{ s }}" {% if s == application.status %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-primary">Update Status</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Interviews</div>
+      <div class="card-body p-0">
+        <table class="table mb-0"><thead><tr><th>Round</th><th>Type</th><th>Date</th><th>Result</th></tr></thead>
+        <tbody>
+        {% for iv in application.interviews %}
+          <tr><td>{{ iv.round_name }}</td><td>{{ iv.interview_type or '—' }}</td><td>{{ iv.interview_date or '—' }}</td><td>{{ iv.result }}</td></tr>
+        {% else %}
+          <tr><td colspan="4" class="text-center text-muted py-3">No interviews.</td></tr>
+        {% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    {% if application.offer %}
+    <div class="card mb-3">
+      <div class="card-header">Offer</div>
+      <div class="card-body">
+        <p class="mb-1"><strong>Status:</strong> <span class="badge bg-teal">{{ application.offer.status }}</span></p>
+        <p class="mb-1"><strong>Stipend:</strong> {{ application.offer.stipend or '—' }}</p>
+        <p class="mb-1"><strong>Joining Date:</strong> {{ application.offer.joining_date or '—' }}</p>
+      </div>
+    </div>
+    {% endif %}
+    <div class="card">
+      <div class="card-header">Activity History</div>
+      <div class="card-body">
+        {% for act in application.activities %}
+        <div class="activity-item">
+          <div class="fw-semibold small">{{ act.description }}</div>
+          <div class="text-muted-small">{{ act.timestamp.strftime('%d %b %Y, %I:%M %p') }}</div>
+        </div>
+        {% else %}
+        <div class="text-muted text-center py-3">No activity yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ internship.title }}{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('internships.browse') }}">Internship Opportunities</a></li>
+    <li class="breadcrumb-item active">{{ internship.title }}</li>
+  </ol>
+</nav>
+
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <h4 class="mb-1">{{ internship.title }}</h4>
+        <div class="text-muted mb-2">{{ internship.company_name }}</div>
+      </div>
+      <span class="badge {% if internship.effective_status() == 'Active' %}bg-success{% else %}bg-secondary{% endif %} fs-6">{{ internship.effective_status() }}</span>
+    </div>
+
+    <div class="row g-3 my-2">
+      <div class="col-md-3"><strong>Location:</strong><br>{{ internship.location or 'N/A' }}</div>
+      <div class="col-md-3"><strong>Work Mode:</strong><br>{{ internship.work_mode or 'N/A' }}</div>
+      <div class="col-md-3"><strong>Type:</strong><br>{{ internship.internship_type or 'N/A' }}</div>
+      <div class="col-md-3"><strong>Stipend:</strong><br>{{ internship.stipend or 'N/A' }}</div>
+      <div class="col-md-3"><strong>Duration:</strong><br>{{ internship.duration or 'N/A' }}</div>
+      <div class="col-md-3"><strong>Start Date:</strong><br>{{ internship.start_date or 'N/A' }}</div>
+      <div class="col-md-3"><strong>Deadline:</strong><br>{{ internship.deadline or 'N/A' }}</div>
+    </div>
+
+    <hr>
+    <h6 class="fw-bold">Description</h6>
+    <p>{{ internship.description or 'No description provided.' }}</p>
+
+    <h6 class="fw-bold">Required Skills</h6>
+    <p>{{ internship.required_skills or 'Not specified.' }}</p>
+
+    <h6 class="fw-bold">Eligibility Criteria</h6>
+    <p>{{ internship.eligibility or 'Not specified.' }}</p>
+
+    {% if internship.application_link %}
+    <p><strong>External Link:</strong> <a href="{{ internship.application_link }}" target="_blank" rel="noopener">{{ internship.application_link }}</a></p>
+    {% endif %}
+
+    <div class="mt-3">
+      {% if already_applied %}
+        <button class="btn btn-secondary" disabled><i class="bi bi-check-circle"></i> Already Applied</button>
+      {% elif internship.effective_status() != 'Active' %}
+        <button class="btn btn-secondary" disabled>Applications Closed</button>
+      {% else %}
+        <form method="POST" action="{{ url_for('internships.apply', internship_id=internship.id) }}" data-confirm="Apply to {{ internship.company_name }} for the {{ internship.title }} role?">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Apply Now</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

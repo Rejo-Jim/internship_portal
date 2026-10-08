@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Internship Opportunities{% endblock %}
+{% block content %}
+<h4 class="section-title mb-3">Internship Opportunities</h4>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <form method="GET" class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label">Search</label>
+        <input type="text" name="q" class="form-control" placeholder="Company or title" value="{{ search }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Location</label>
+        <input type="text" name="location" class="form-control" value="{{ location }}" placeholder="City">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Work Mode</label>
+        <select name="work_mode" class="form-select">
+          <option value="">All</option>
+          {% for wm in ["On-site","Hybrid","Remote"] %}
+          <option value="{{ wm }}" {% if work_mode == wm %}selected{% endif %}>{{ wm }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Type</label>
+        <select name="internship_type" class="form-select">
+          <option value="">All</option>
+          {% for t in ["Paid","Unpaid"] %}
+          <option value="{{ t }}" {% if internship_type == t %}selected{% endif %}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Sort</label>
+        <select name="sort" class="form-select">
+          <option value="">Newest</option>
+          <option value="deadline" {% if sort == 'deadline' %}selected{% endif %}>Deadline</option>
+        </select>
+      </div>
+      <div class="col-md-1">
+        <button class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row g-3">
+  {% for i in internships %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body d-flex flex-column">
+        <div class="d-flex justify-content-between">
+          <h6 class="fw-bold mb-1">{{ i.title }}</h6>
+          <span class="badge {% if i.effective_status() == 'Active' %}bg-success{% else %}bg-secondary{% endif %}">{{ i.effective_status() }}</span>
+        </div>
+        <div class="text-muted-small mb-2">{{ i.company_name }}</div>
+        <div class="mb-2">
+          <span class="badge bg-light text-dark border me-1"><i class="bi bi-geo-alt"></i> {{ i.location or 'N/A' }}</span>
+          <span class="badge bg-light text-dark border me-1">{{ i.work_mode or 'N/A' }}</span>
+          <span class="badge bg-light text-dark border">{{ i.internship_type or 'N/A' }}</span>
+        </div>
+        <p class="text-muted-small flex-grow-1">{{ (i.description or "")[:100] }}{% if i.description and i.description|length > 100 %}...{% endif %}</p>
+        <div class="d-flex justify-content-between align-items-center mt-2">
+          <span class="text-muted-small">Deadline: {{ i.deadline or 'N/A' }}</span>
+          <a href="{{ url_for('internships.detail', internship_id=i.id) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12">
+    <div class="text-center text-muted py-5">No internship opportunities match your filters.</div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

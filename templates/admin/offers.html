@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Offers{% endblock %}
+{% block content %}
+<h4 class="section-title mb-3">All Offers</h4>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label">Company</label>
+        <input type="text" name="company" class="form-control" value="{{ company }}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Department</label>
+        <select name="department" class="form-select">
+          <option value="">All</option>
+          {% for d in departments %}
+          <option value="{{ d }}" {% if department == d %}selected{% endif %}>{{ d }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Year</label>
+        <select name="year" class="form-select">
+          <option value="">All</option>
+          {% for y in years %}
+          <option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+          <option value="">All</option>
+          {% for s in statuses %}
+          <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100">Filter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Student</th><th>Company</th><th>Role</th><th>Stipend</th><th>Joining Date</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for o in offers %}
+        <tr>
+          <td>{{ o.student.user.full_name }}</td>
+          <td>{{ o.company_name }}</td>
+          <td>{{ o.role }}</td>
+          <td>{{ o.stipend or '—' }}</td>
+          <td>{{ o.joining_date or '—' }}</td>
+          <td><span class="badge {% if o.status == 'Accepted' %}bg-success{% elif o.status == 'Declined' %}bg-danger{% elif o.status == 'Withdrawn' %}bg-dark{% else %}bg-teal{% endif %}">{{ o.status }}</span></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No offers found.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

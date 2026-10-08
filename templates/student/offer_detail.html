@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Offer - {{ offer.company_name }}{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('offers.list_offers') }}">My Offers</a></li>
+    <li class="breadcrumb-item active">{{ offer.company_name }}</li>
+  </ol>
+</nav>
+
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <h4 class="mb-1">{{ offer.role }}</h4>
+        <div class="text-muted">{{ offer.company_name }}</div>
+      </div>
+      <span class="badge
+        {% if offer.status == 'Accepted' %}bg-success
+        {% elif offer.status == 'Declined' %}bg-danger
+        {% elif offer.status == 'Withdrawn' %}bg-dark
+        {% else %}bg-teal{% endif %} fs-6">{{ offer.status }}</span>
+    </div>
+
+    <div class="row g-3 my-3">
+      <div class="col-md-4"><strong>Offer Date:</strong><br>{{ offer.offer_date or '—' }}</div>
+      <div class="col-md-4"><strong>Joining Date:</strong><br>{{ offer.joining_date or '—' }}</div>
+      <div class="col-md-4"><strong>Duration:</strong><br>{{ offer.duration or '—' }}</div>
+      <div class="col-md-4"><strong>Stipend:</strong><br>{{ offer.stipend or '—' }}</div>
+      <div class="col-md-4"><strong>Location:</strong><br>{{ offer.location or '—' }}</div>
+      <div class="col-md-4"><strong>Work Mode:</strong><br>{{ offer.work_mode or '—' }}</div>
+    </div>
+
+    {% if offer.status == "Pending Decision" %}
+    <hr>
+    <div class="d-flex gap-2">
+      <form method="POST" action="{{ url_for('offers.decide', offer_id=offer.id) }}" data-confirm="Accept this offer from {{ offer.company_name }}? This will update your application status.">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="decision" value="Accepted">
+        <button class="btn btn-success"><i class="bi bi-check-circle"></i> Accept Offer</button>
+      </form>
+      <form method="POST" action="{{ url_for('offers.decide', offer_id=offer.id) }}" data-confirm="Decline this offer from {{ offer.company_name }}?">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="decision" value="Declined">
+        <button class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> Decline Offer</button>
+      </form>
+    </div>
+    {% endif %}
+
+    <a href="{{ url_for('applications.detail', app_id=offer.application_id) }}" class="btn btn-outline-secondary mt-3">View Related Application</a>
+  </div>
+</div>
+{% endblock %}

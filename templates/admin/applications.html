@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Applications{% endblock %}
+{% block content %}
+<h4 class="section-title mb-3">All Applications</h4>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" class="row g-2 align-items-end">
+      <div class="col-md-2">
+        <label class="form-label">Student</label>
+        <input type="text" name="student" class="form-control" value="{{ student_search }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Company</label>
+        <input type="text" name="company" class="form-control" value="{{ company_search }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+          <option value="">All</option>
+          {% for s in statuses %}
+          <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Department</label>
+        <select name="department" class="form-select">
+          <option value="">All</option>
+          {% for d in departments %}
+          <option value="{{ d }}" {% if department == d %}selected{% endif %}>{{ d }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Date</label>
+        <input type="date" name="date" class="form-control" value="{{ date_filter }}">
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100">Filter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Student</th><th>Company</th><th>Role</th><th>Department</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for a in applications %}
+        <tr>
+          <td>{{ a.student.user.full_name }}</td>
+          <td>{{ a.company_name }}</td>
+          <td>{{ a.role }}</td>
+          <td>{{ a.student.branch or '—' }}</td>
+          <td><span class="badge bg-{{ status_badge(a.status) }}">{{ a.status }}</span></td>
+          <td><a href="{{ url_for('admin.application_detail', app_id=a.id) }}" class="btn btn-sm btn-outline-primary">View</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No applications found.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+{% if total_pages > 1 %}
+<nav class="mt-3">
+  <ul class="pagination justify-content-center">
+    {% for p in range(1, total_pages + 1) %}
+    <li class="page-item {% if p == page %}active{% endif %}">
+      <a class="page-link" href="{{ url_for('admin.applications', page=p, student=student_search, company=company_search, status=status_filter, department=department, date=date_filter) }}">{{ p }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}

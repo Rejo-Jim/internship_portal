@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{% if edit %}Edit{% else %}Add{% endif %} Internship{% endblock %}
+{% block content %}
+<h4 class="section-title mb-3">{% if edit %}Edit Internship Opportunity{% else %}Add Internship Opportunity{% endif %}</h4>
+
+<form method="POST" class="needs-validation" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="card">
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Company Name *</label>
+        <input type="text" name="company_name" class="form-control" value="{{ form.get('company_name','') }}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Internship Title *</label>
+        <input type="text" name="title" class="form-control" value="{{ form.get('title','') }}" required>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control" rows="3">{{ form.get('description','') }}</textarea>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Location</label>
+        <input type="text" name="location" class="form-control" value="{{ form.get('location','') }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Work Mode</label>
+        <select name="work_mode" class="form-select">
+          <option value="">Select</option>
+          {% for wm in ["On-site","Hybrid","Remote"] %}
+          <option value="{{ wm }}" {% if form.get('work_mode') == wm %}selected{% endif %}>{{ wm }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Internship Type</label>
+        <select name="internship_type" class="form-select">
+          <option value="">Select</option>
+          {% for t in ["Paid","Unpaid"] %}
+          <option value="{{ t }}" {% if form.get('internship_type') == t %}selected{% endif %}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Stipend</label>
+        <input type="text" name="stipend" class="form-control" value="{{ form.get('stipend','') }}" placeholder="e.g. 10000/month">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Duration</label>
+        <input type="text" name="duration" class="form-control" value="{{ form.get('duration','') }}" placeholder="e.g. 3 months">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Start Date</label>
+        <input type="date" name="start_date" class="form-control" value="{{ form.get('start_date','') }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Application Deadline</label>
+        <input type="date" name="deadline" class="form-control" value="{{ form.get('deadline','') }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Application Link</label>
+        <input type="url" name="application_link" class="form-control" value="{{ form.get('application_link','') }}">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Required Skills</label>
+        <input type="text" name="required_skills" class="form-control" value="{{ form.get('required_skills','') }}" placeholder="e.g. Python, Flask, SQL">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Eligibility Criteria</label>
+        <input type="text" name="eligibility" class="form-control" value="{{ form.get('eligibility','') }}" placeholder="e.g. CGPA above 7, 3rd/4th year">
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary px-4 mt-3">{% if edit %}Save Changes{% else %}Add Internship{% endif %}</button>
+  <a href="{{ url_for('admin.internships') }}" class="btn btn-outline-secondary mt-3">Cancel</a>
+</form>
+{% endblock %}

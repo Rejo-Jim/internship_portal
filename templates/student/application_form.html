@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{% if edit %}Edit{% else %}Add{% endif %} Application{% endblock %}
+{% block content %}
+<h4 class="section-title mb-3">{% if edit %}Edit Application{% else %}Add New Application{% endif %}</h4>
+
+<form method="POST" class="needs-validation" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="card">
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Company Name *</label>
+        <input type="text" name="company_name" class="form-control" value="{{ form.get('company_name','') }}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Internship Role *</label>
+        <input type="text" name="role" class="form-control" value="{{ form.get('role','') }}" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Internship Type</label>
+        <select name="internship_type" class="form-select">
+          <option value="">Select</option>
+          {% for t in ["Paid","Unpaid"] %}
+          <option value="{{ t }}" {% if form.get('internship_type') == t %}selected{% endif %}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Location</label>
+        <input type="text" name="location" class="form-control" value="{{ form.get('location','') }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Work Mode</label>
+        <select name="work_mode" class="form-select">
+          <option value="">Select</option>
+          {% for wm in ["On-site","Hybrid","Remote"] %}
+          <option value="{{ wm }}" {% if form.get('work_mode') == wm %}selected{% endif %}>{{ wm }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Application Date</label>
+        <input type="date" name="application_date" class="form-control" value="{{ form.get('application_date','') }}">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Application Deadline</label>
+        <input type="date" name="application_deadline" class="form-control" value="{{ form.get('application_deadline','') }}">
+      </div>
+      {% if not edit %}
+      <div class="col-md-4">
+        <label class="form-label">Initial Status</label>
+        <select name="status" class="form-select">
+          {% for s in statuses[:3] %}
+          <option value="{{ s }}" {% if s == "Applied" %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      <div class="col-md-6">
+        <label class="form-label">Source</label>
+        <input type="text" name="source" class="form-control" value="{{ form.get('source','') }}" placeholder="e.g. LinkedIn, Campus Drive">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Job / Application Link</label>
+        <input type="url" name="application_link" class="form-control" value="{{ form.get('application_link','') }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Contact Person</label>
+        <input type="text" name="contact_person" class="form-control" value="{{ form.get('contact_person','') }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Contact Email</label>
+        <input type="email" name="contact_email" class="form-control" value="{{ form.get('contact_email','') }}">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Notes</label>
+        <textarea name="notes" class="form-control" rows="3">{{ form.get('notes','') }}</textarea>
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary px-4 mt-3">{% if edit %}Save Changes{% else %}Add Application{% endif %}</button>
+  <a href="{{ url_for('applications.list_applications') }}" class="btn btn-outline-secondary mt-3">Cancel</a>
+</form>
+{% endblock %}

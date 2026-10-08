@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}My Applications{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <h4 class="section-title mb-0">My Applications</h4>
+  <a href="{{ url_for('applications.add_application') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Add Application</a>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" class="row g-2 align-items-end">
+      <div class="col-md-5">
+        <label class="form-label">Search</label>
+        <input type="text" name="q" class="form-control" value="{{ search }}" placeholder="Company or role">
+      </div>
+      <div class="col-md-5">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+          <option value="">All Statuses</option>
+          {% for s in statuses %}
+          <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100">Filter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Company</th><th>Role</th><th>Type</th><th>Applied On</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for a in applications %}
+        <tr>
+          <td>{{ a.company_name }}</td>
+          <td>{{ a.role }}</td>
+          <td>{{ a.internship_type or '—' }}</td>
+          <td>{{ a.application_date or '—' }}</td>
+          <td><span class="badge bg-{{ status_badge(a.status) }}">{{ a.status }}</span></td>
+          <td><a href="{{ url_for('applications.detail', app_id=a.id) }}" class="btn btn-sm btn-outline-primary">View</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No applications found.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

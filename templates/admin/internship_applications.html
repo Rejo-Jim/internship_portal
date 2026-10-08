@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Applications - {{ internship.title }}{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('admin.internships') }}">Internships</a></li>
+    <li class="breadcrumb-item active">{{ internship.title }}</li>
+  </ol>
+</nav>
+<h4 class="section-title mb-3">Applications for {{ internship.title }} ({{ internship.company_name }})</h4>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>Student</th><th>Email</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for a in applications %}
+        <tr>
+          <td>{{ a.student.user.full_name }}</td>
+          <td>{{ a.student.user.email }}</td>
+          <td><span class="badge bg-{{ status_badge(a.status) }}">{{ a.status }}</span></td>
+          <td><a href="{{ url_for('admin.application_detail', app_id=a.id) }}" class="btn btn-sm btn-outline-primary">View</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4" class="text-center text-muted py-4">No applications yet for this internship.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
